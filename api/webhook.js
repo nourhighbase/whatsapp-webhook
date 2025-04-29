@@ -1,5 +1,5 @@
 export default function handler(req, res) {
-  const VERIFY_TOKEN = "highbase_secret_token"; // Change this to your real secret
+  const VERIFY_TOKEN = process.env.VERIFY_TOKEN; // now using your env variable
 
   if (req.method === 'GET') {
     const mode = req.query['hub.mode'];
