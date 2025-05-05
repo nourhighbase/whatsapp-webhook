@@ -1,22 +1,38 @@
 export default async function handler(req, res) {
   const VERIFY_TOKEN = process.env.VERIFY_TOKEN || "highbase123";
 
-  if (req.method === 'GET') {
-    const mode = req.query['hub.mode'];
-    const token = req.query['hub.verify_token'];
-    const challenge = req.query['hub.challenge'];
+  try {
+    if (req.method === 'GET') {
+      const mode = req.query['hub.mode'];
+      const token = req.query['hub.verify_token'];
+      const challenge = req.query['hub.challenge'];
 
-    if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-      return res.status(200).send(challenge);
-    } else {
-      return res.status(403).send('Forbidden');
+      if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+        return res.status(200).send(challenge);
+      } else {
+        return res.status(403).send('Forbidden');
+      }
     }
-  }
 
-  if (req.method === 'POST') {
-    console.log("✅ Webhook event received:", JSON.stringify(req.body, null, 2));
-    return res.status(200).send("EVENT_RECEIVED");
-  }
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => { body += chunk });
+      req.on('end', () => {
+        try {
+          const parsedBody = JSON.parse(body);
+          console.log("✅ Webhook event:", parsedBody);
+          res.status(200).send("EVENT_RECEIVED");
+        } catch (err) {
+          console.error("❌ JSON Error:", err);
+          res.status(400).send("Invalid JSON");
+        }
+      });
+      return;
+    }
 
-  return res.status(405).send('Method Not Allowed');
+    return res.status(405).send('Method Not Allowed');
+  } catch (err) {
+    console.error("🔥 Unexpected error:", err);
+    return res.status(500).send("Internal Server Error");
+  }
 }
