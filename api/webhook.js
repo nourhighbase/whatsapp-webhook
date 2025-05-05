@@ -14,10 +14,9 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    // Handle webhook data here
-    console.log("✅ POST received:", JSON.stringify(req.body));
+    console.log("✅ Webhook event received:", JSON.stringify(req.body, null, 2));
     return res.status(200).send("EVENT_RECEIVED");
   }
 
-  return res.status(405).send("Method Not Allowed");
+  return res.status(405).send('Method Not Allowed');
 }
