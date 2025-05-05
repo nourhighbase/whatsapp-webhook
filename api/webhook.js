@@ -8,8 +8,10 @@ export default async function handler(req, res) {
       const challenge = req.query['hub.challenge'];
 
       if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+        console.log("✅ WEBHOOK_VERIFIED");
         return res.status(200).send(challenge);
       } else {
+        console.warn("❌ Verification failed");
         return res.status(403).send('Forbidden');
       }
     }
@@ -17,7 +19,6 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
       let body = '';
 
-      // Optional: Parse raw body stream for advanced security (e.g., signature checks)
       req.on('data', chunk => {
         body += chunk;
       });
@@ -25,7 +26,7 @@ export default async function handler(req, res) {
       req.on('end', () => {
         try {
           const parsedBody = JSON.parse(body);
-          console.log("✅ Webhook event received:", JSON.stringify(parsedBody, null, 2));
+          console.log("📩 Webhook event received:", JSON.stringify(parsedBody, null, 2));
           res.status(200).send("EVENT_RECEIVED");
         } catch (parseErr) {
           console.error("❌ JSON parse error:", parseErr);
