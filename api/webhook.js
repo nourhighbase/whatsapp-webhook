@@ -23,7 +23,7 @@ export default async function handler(req, res) {
           console.log("✅ Webhook event:", parsedBody);
           res.status(200).send("EVENT_RECEIVED");
         } catch (err) {
-          console.error("❌ JSON Error:", err);
+          console.error("❌ JSON parse error:", err);
           res.status(400).send("Invalid JSON");
         }
       });
