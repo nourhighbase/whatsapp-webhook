@@ -13,5 +13,10 @@ export default async function handler(req, res) {
     }
   }
 
+  if (req.method === "POST") {
+    console.log("📩 Incoming webhook:", JSON.stringify(req.body, null, 2));
+    return res.status(200).send("EVENT_RECEIVED");
+  }
+
   return res.status(405).send("Method Not Allowed");
 }
